@@ -16,7 +16,7 @@ import os
 # Allow imports from the project root when running tests directly
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
-from utils.data_loader import load_all_projects, find_project_by_id
+from utils.data_loader import load_all_projects, find_project_by_id, clear_cache
 from utils.recommender import (
     get_recommendations,
     validate_recommendation_inputs,
@@ -24,6 +24,15 @@ from utils.recommender import (
     score_single_project,
 )
 from app import app
+
+
+# ============================================================
+# Test setup
+# ============================================================
+
+def setup_module():
+    """Clear the data cache before running the test suite to ensure clean state."""
+    clear_cache()
 
 
 # ============================================================
