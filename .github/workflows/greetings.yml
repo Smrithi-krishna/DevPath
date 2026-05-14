@@ -1,0 +1,49 @@
+# .github/workflows/greetings.yml
+
+name: Greetings
+
+on:
+  issues:
+    types: [opened]
+
+  pull_request_target:
+    types: [opened]
+
+jobs:
+  greeting:
+    runs-on: ubuntu-latest
+
+    permissions:
+      issues: write
+      pull-requests: write
+
+    steps:
+      - name: Send greeting message
+        uses: actions/first-interaction@v1
+
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+
+          issue-message: |
+            Thank you for opening your first issue in DevPath.
+
+            We appreciate your interest in contributing to the project. Before working on an issue, please make sure to:
+            - Read the README.md and CONTRIBUTING.md files
+            - Wait until the issue is assigned to you
+            - Follow the repository guidelines carefully
+
+            If you are new to open source, feel free to ask questions in Discussions.
+
+            Happy contributing.
+
+          pr-message: |
+            Thank you for submitting your first pull request to DevPath.
+
+            Please ensure that:
+            - The PR template is fully completed
+            - All tests are passing
+            - Your branch follows the naming conventions
+            - The PR is linked to an existing issue
+            - Only issue-related changes are included
+
+            Our maintainers will review your contribution soon. We appreciate your effort and contribution to DevPath.
