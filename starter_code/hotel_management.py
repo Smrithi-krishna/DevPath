@@ -1,14 +1,33 @@
 """
-Project: Sunrise Grand Hotel Management System
+hotel_management.py
+===================
+Project:    Sunrise Grand Hotel Management System
 Difficulty: Medium
-Skills: Python, Dictionaries, Functions, Error Handling, Input Validation
-Time: Medium (a weekend)
+Skills:     Python, Dictionaries, Functions, Error Handling, Input Validation
+Time:       Medium (a weekend)
 
 What you will build:
-    A robust hotel management application to manage 40 rooms across four categories.
-    The system allows for dynamic room initialization, guest booking with automatic 
-    price calculation based on stay duration, booking cancellations, and targeted 
+    A robust hotel management application to manage a 40-room inventory 
+    across four categories. The system allows for dynamic room 
+    initialization, guest booking with automatic price calculation 
+    based on stay duration, booking cancellations, and targeted 
     searches by room category.
+
+How to run:
+    python hotel_management.py    
+
+Learning goals:
+    - Managing state using nested dictionaries and lists.
+    - Implementing robust input validation for user data.
+    - Structuring a menu-driven CLI application.
+    - Handling basic business logic (billing, availability).
+
+Roadmap:
+    Step 1: Initialize the 40-room inventory with tiered pricing.
+    Step 2: Implement availability display and category filtering.
+    Step 3: Build the booking engine with contact validation.
+    Step 4: Create the cancellation and guest detail lookup logic.
+    Step 5: Wrap all logic in a persistent main menu loop.
 """
 
 def initialize_rooms():
