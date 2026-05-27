@@ -494,13 +494,16 @@ if (clearFiltersBtn) {
     // Allow browser to paint spinner before request starts
     requestAnimationFrame(function () {
 
+      //combine form values into an object to send to server/api
       var payload = {
+        // Prefer the hidden input value; fall back to raw text box if hidden input is empty
         skills: skillsHidden.value.trim() || skillsTextInput.value.trim(),
         level: document.getElementById("level").value,
         interest: document.getElementById("interest").value,
         time: document.getElementById("time").value
       };
 
+      //post the data to backend api as JSON, then handle the response
       fetch("/api/recommend", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -525,50 +528,14 @@ if (clearFiltersBtn) {
 
           renderResults(data.projects || [], data.message);
         })
-        .catch(function () {
-
+        .catch(function (err) {
+          // this runs if the network request itself fails 
           setLoadingState(false);
-    //combine form values into an object to send to server/api
-    var payload = {
-      // Prefer the hidden input value; fall back to raw text box if hidden input is empty
-      skills: skillsHidden.value.trim() || skillsTextInput.value.trim(),
-      level: document.getElementById("level").value,
-      interest: document.getElementById("interest").value,
-      time: document.getElementById("time").value
-    };
-
-    //post the data to backend api as JSON, then handle the response
-    fetch("/api/recommend", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body:    JSON.stringify(payload) //convert object to json string
-    })
-      .then(function (res) { return res.json(); }) //parse the response as JSON
-      .then(function (data) {
-        setLoadingState(false);
-
           var generalErr = document.getElementById("form-error-general");
-
-          if (generalErr) {
-            generalErr.textContent =
-              "Something went wrong. Please try again.";
-          }
+          if (generalErr) generalErr.textContent = "Something went wrong. Please try again.";
+          console.error("API request failed:", err);
         });
     });
-        if (data.error) {
-          var generalErr = document.getElementById("form-error-general");
-          if (generalErr) generalErr.textContent = data.error;
-          return;
-        }
-        renderResults(data.projects || [], data.message);
-      })
-      .catch(function (err) {
-        // this runs if the network request itself fails 
-        setLoadingState(false);
-        var generalErr = document.getElementById("form-error-general");
-        if (generalErr) generalErr.textContent = "Something went wrong. Please try again.";
-        console.error("API request failed:", err);
-      });
   });
 
   // Manages the loading state of the form and results section(whats visible or not)
@@ -600,40 +567,28 @@ if (clearFiltersBtn) {
   // Render result cards
   // ----------------------------------------------------------
 
-  //takes the array of projects from the api and draws them on the page as cards
-  //if array is empty it shows the "no results" message instead
+  // Renders project result cards or shows the empty-state message.
+  // Uses a single consolidated check to toggle between states.
   function renderResults(projects, message) {
     resultsSection.style.display = "block";
     resultsLoadingEl.style.display = "none";
-    // Clear out any cards from a previous search before showing new ones
     resultsGrid.innerHTML = "";
 
-    // Reference the share button wrapper so we can show/hide it with results
     var shareWrap = document.getElementById("share-result-wrap");
+    var hasResults = projects && projects.length > 0;
 
-    if (!projects || projects.length === 0) {
-      resultsGrid.style.display     = "none";
-      resultsEmptyEl.style.display  = "block";
-      resultsGrid.style.display = "none";
-      resultsEmptyEl.style.display = "block";
+    // Single consolidated toggle for empty vs. populated state
+    resultsGrid.style.display    = hasResults ? "grid" : "none";
+    resultsEmptyEl.style.display = hasResults ? "none" : "block";
+    if (shareWrap) shareWrap.style.display = hasResults ? "flex" : "none";
+
+    if (!hasResults) {
       if (message && emptyMessageEl) emptyMessageEl.textContent = message;
-      // Hide the share button when there are no results to share
-      if (shareWrap) shareWrap.style.display = "none";
-    if (!projects || projects.length === 0) { //if no projects returned from api, show the "no results" message and hide the grid
-      resultsGrid.style.display      = "none";
-      resultsEmptyEl.style.display   = "block";
-      if (message && emptyMessageEl) emptyMessageEl.textContent = message; //if api sent back a message (e.g. "no projects found matching your criteria"), show that 
       resultsSection.scrollIntoView({ behavior: "smooth" });
       return;
     }
 
-    resultsEmptyEl.style.display = "none";
-    resultsGrid.style.display = "grid";
-
-    // Show the share button when results are displayed
-    if (shareWrap) shareWrap.style.display = "flex";
-
-    //build a card for each project and add it to the grid
+    // Build a card for each project and add it to the grid
     projects.forEach(function (project) {
       resultsGrid.appendChild(buildProjectCard(project));
     });
@@ -716,26 +671,56 @@ if (clearFiltersBtn) {
   // Share My Result — build URL and copy to clipboard
   // ----------------------------------------------------------
 
-  // Build a shareable URL from the current form selections
+  var MAX_SHARE_SKILLS = 10;
+  var MAX_URL_LENGTH   = 2000;
+
+  // Build a shareable URL from the current form selections.
+  // Caps skill count and enforces a max URL length to avoid oversized links.
   function buildShareUrl() {
     var baseUrl = window.location.origin + window.location.pathname;
     var params = new URLSearchParams();
-    params.set("skills", skillsHidden.value.trim());
+    var allSkills = skillsHidden.value.trim();
+    var skillsArr = [];
+    var truncated = false;
+
+    if (allSkills) {
+      skillsArr = allSkills.split(",").map(function (s) { return s.trim(); }).filter(Boolean);
+      if (skillsArr.length > MAX_SHARE_SKILLS) {
+        skillsArr = skillsArr.slice(0, MAX_SHARE_SKILLS);
+        truncated = true;
+      }
+      params.set("skills", skillsArr.join(", "));
+    }
+
     params.set("level", document.getElementById("level").value);
     params.set("interest", document.getElementById("interest").value);
     params.set("time", document.getElementById("time").value);
-    return baseUrl + "?" + params.toString();
+
+    var url = baseUrl + "?" + params.toString();
+
+    // Progressively trim skills if URL still exceeds safe browser limit
+    while (url.length > MAX_URL_LENGTH && skillsArr.length > 1) {
+      skillsArr.pop();
+      truncated = true;
+      params.set("skills", skillsArr.join(", "));
+      url = baseUrl + "?" + params.toString();
+    }
+
+    return { url: url, truncated: truncated };
   }
 
   var shareBtn = document.getElementById("share-result-btn");
   var shareToast = document.getElementById("share-toast");
   var shareToastTimeout = null;
+  var _shareWasTruncated = false;
 
-  // Show the "Copied!" state on the share button and display the toast
+  // Show the "Copied!" state on the share button and display the toast.
+  // If skills were truncated, the label indicates the truncation.
   function showShareSuccess() {
     if (!shareBtn) return;
     var originalLabel = shareBtn.querySelector(".share-btn-label");
-    if (originalLabel) originalLabel.textContent = "Copied!";
+    var labelText = _shareWasTruncated ? "Copied! (some skills trimmed)" : "Copied!";
+    if (originalLabel) originalLabel.textContent = labelText;
     shareBtn.classList.add("copied");
 
     if (shareToast) shareToast.classList.add("show");
@@ -763,7 +748,9 @@ if (clearFiltersBtn) {
 
   if (shareBtn) {
     shareBtn.addEventListener("click", function () {
-      var url = buildShareUrl();
+      var result = buildShareUrl();
+      var url = result.url;
+      _shareWasTruncated = result.truncated;
 
       // Use Clipboard API with textarea fallback
       if (navigator.clipboard && navigator.clipboard.writeText) {
@@ -780,10 +767,39 @@ if (clearFiltersBtn) {
 
 
   // ----------------------------------------------------------
-  // Auto-fill from shared URL query params
+  // Query param validation for shared URLs
   // ----------------------------------------------------------
 
-  // Read query params on page load and auto-fill the form if all params are present
+  var VALID_LEVELS    = ["Beginner", "Intermediate", "Advanced"];
+  var VALID_INTERESTS = ["Web", "Data", "Education", "Automation", "Games"];
+  var VALID_TIMES     = ["Low", "Medium", "High"];
+
+  // Strip HTML tags and restrict to safe characters for skill values
+  function sanitizeSkillValue(raw) {
+    if (!raw || typeof raw !== "string") return "";
+    // Remove any HTML/script tags
+    var cleaned = raw.replace(/<[^>]*>/g, "");
+    // Allow only safe characters: letters, digits, spaces, dots, #, +, _, -, /
+    cleaned = cleaned.replace(/[^A-Za-z0-9 .#+_\-\/]/g, "");
+    return cleaned.trim();
+  }
+
+  // Return the value only if it appears in the allowlist, otherwise ""
+  function validateDropdownValue(value, allowlist) {
+    if (!value || typeof value !== "string") return "";
+    var trimmed = value.trim();
+    for (var i = 0; i < allowlist.length; i++) {
+      if (allowlist[i] === trimmed) return trimmed;
+    }
+    return "";
+  }
+
+
+  // ----------------------------------------------------------
+  // Auto-fill from shared URL query params (no auto-submit)
+  // ----------------------------------------------------------
+
+  // Pre-fill form from URL params but require user to click Generate
   (function initFromQueryParams() {
     var params = new URLSearchParams(window.location.search);
     var qSkills   = params.get("skills");
@@ -794,19 +810,39 @@ if (clearFiltersBtn) {
     // Only auto-fill if all four params are present
     if (!qSkills || !qLevel || !qInterest || !qTime) return;
 
-    // Add each skill from the comma-separated query param
+    // Validate dropdown values against their allowlists
+    var safeLevel    = validateDropdownValue(qLevel, VALID_LEVELS);
+    var safeInterest = validateDropdownValue(qInterest, VALID_INTERESTS);
+    var safeTime     = validateDropdownValue(qTime, VALID_TIMES);
+
+    // Abort if any dropdown value is invalid
+    if (!safeLevel || !safeInterest || !safeTime) return;
+
+    // Sanitize and add each skill from the comma-separated query param
     qSkills.split(",").forEach(function (s) {
-      var trimmed = s.trim();
-      if (trimmed) addSkill(trimmed);
+      var safe = sanitizeSkillValue(s);
+      if (safe) addSkill(safe);
     });
 
-    // Set dropdown values to match the shared selections
-    document.getElementById("level").value = qLevel;
-    document.getElementById("interest").value = qInterest;
-    document.getElementById("time").value = qTime;
+    // Set dropdown values to the validated selections
+    document.getElementById("level").value = safeLevel;
+    document.getElementById("interest").value = safeInterest;
+    document.getElementById("time").value = safeTime;
 
-    // Auto-trigger the form submission to show results immediately
-    form.dispatchEvent(new Event("submit", { cancelable: true }));
+    // Show the prefill banner instead of auto-submitting
+    var banner = document.getElementById("share-prefill-banner");
+    var bannerClose = document.getElementById("share-prefill-banner-close");
+    if (banner) {
+      banner.style.display = "flex";
+      if (bannerClose) {
+        bannerClose.addEventListener("click", function () {
+          banner.style.display = "none";
+        });
+      }
+      // Scroll form into view so user sees the pre-filled state
+      var formSection = document.getElementById("find-project");
+      if (formSection) formSection.scrollIntoView({ behavior: "smooth" });
+    }
   })();
 
 } // end isIndexPage

@@ -305,6 +305,62 @@ def test_home_route_with_share_params():
     assert response.status_code == 200
 
 
+def test_share_banner_element_exists():
+    """The page HTML must include the share-prefill-banner element for JS to populate."""
+    client = get_client()
+    response = client.get("/")
+    html = response.data.decode()
+    assert 'id="share-prefill-banner"' in html
+
+
+def test_share_params_partial_loads_ok():
+    """Partial share params should not break the page — server renders normally."""
+    client = get_client()
+    response = client.get("/?skills=Python&level=Beginner")
+    assert response.status_code == 200
+
+
+def test_share_params_invalid_level_not_reflected():
+    """An invalid level value should not appear in the server-rendered HTML form options."""
+    client = get_client()
+    response = client.get("/?skills=Python&level=Expert&interest=Data&time=Low")
+    html = response.data.decode()
+    # 'Expert' is not a valid option, so it must not appear as a selected value
+    assert 'value="Expert" selected' not in html
+
+
+def test_share_params_xss_not_reflected():
+    """Script tags in query params must not be rendered in server HTML."""
+    client = get_client()
+    response = client.get("/?skills=<script>alert(1)</script>&level=Beginner&interest=Data&time=Low")
+    html = response.data.decode()
+    assert "<script>alert(1)</script>" not in html
+
+
+def test_share_params_excessive_skills_loads_ok():
+    """A URL with many skills should not crash the server."""
+    skills = ",".join(["Skill" + str(i) for i in range(30)])
+    client = get_client()
+    response = client.get(f"/?skills={skills}&level=Beginner&interest=Data&time=Low")
+    assert response.status_code == 200
+
+
+def test_api_recommend_invalid_level_no_crash():
+    """Posting an unrecognized level should not crash — returns empty or error."""
+    client = get_client()
+    response = client.post("/api/recommend", json={
+        "skills": "Python",
+        "level": "Expert",
+        "interest": "Data",
+        "time": "Low"
+    })
+    assert response.status_code in (200, 400)
+    data = response.get_json()
+    # Should either be an error or return empty results (no match for 'Expert')
+    if response.status_code == 200:
+        assert "projects" in data
+
+
 # ============================================================
 # Run tests directly (no pytest required)
 # ============================================================
