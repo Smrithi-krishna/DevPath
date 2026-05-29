@@ -451,8 +451,7 @@
     "resources": [
       "MDN DOM guide: https://developer.mozilla.org/en-US/docs/Web/API/Document_Object_Model",
       "JavaScript events: https://javascript.info/events",
-      "W3Schools JavaScript: https://www.w3schools.com/js",
-      "Cosine Similarity: https://naomy-gomes.medium.com/the-cosine-similarity-and-its-use-in-recommendation-systems-cb2ebd811ce1"
+      "W3Schools JavaScript: https://www.w3schools.com/js"
     ],
     "starter_code": "starter_code/quiz_app.html"
   },
@@ -484,7 +483,8 @@
     "resources": [
       "pandas documentation: https://pandas.pydata.org/docs",
       "scikit-learn user guide: https://scikit-learn.org/stable/user_guide.html",
-      "MovieLens dataset: https://grouplens.org/datasets/movielens"
+      "MovieLens dataset: https://grouplens.org/datasets/movielens",
+      "Cosine Similarity: https://naomy-gomes.medium.com/the-cosine-similarity-and-its-use-in-recommendation-systems-cb2ebd811ce1"
     ],
     "starter_code": "starter_code/movie_recommender.py"
   }, 
