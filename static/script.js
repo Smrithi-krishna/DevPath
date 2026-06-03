@@ -796,50 +796,19 @@ if (isIndexPage) {
         emptyMessageEl.textContent = "Try adjusting your skills or choosing a different interest area.";
       }
 
-      resultsEmptyEl.style.display = "none";
-      resultsGrid.style.display = "grid";
-
-      //build a card for each project and add it to the grid
-      projects.forEach(function (project) {
-        resultsGrid.appendChild(buildProjectCard(project));
-      });
-
       resultsSection.scrollIntoView({ behavior: "smooth" });
+      return;
     }
 
-    // builds one project card as a DOM element and returns it
-    // the card has title, short description, tags and link
-    function buildProjectCard(project) {
-      var card = document.createElement("div");
-      card.className = "project-card";
+    resultsEmptyEl.style.display = "none";
+    resultsGrid.style.display = "grid";
 
-      // Title
-      var title = document.createElement("h3");
-      title.className = "project-card-title";
-      title.textContent = project.title;
+    projects.forEach(function (project) {
+      resultsGrid.appendChild(buildProjectCard(project));
+    });
 
-      // Description (truncated for visual consistency)
-      var desc = document.createElement("p");
-      desc.className = "project-card-desc";
-      // Cut description to 120 chars so all cards stay the same height
-      desc.textContent = truncate(project.description, 120);
-
-      // Tags row
-      var tagsRow = document.createElement("div");
-      tagsRow.className = "project-card-tags";
-
-      // Show all project skills as tags so users can see the full match
-      (project.skills || []).forEach(function (skill) {
-        tagsRow.appendChild(createTag(skill, "skill"));
-      });
-
-      // Level tag (colour-coded via CSS class)
-      // Lowercase so it matches the CSS class names like "level beginner", "level advanced"
-      var levelClass = "level " + (project.level || "").toLowerCase();
-      tagsRow.appendChild(createTag(project.level, levelClass));
-
-      // Time tag
-      tagsRow.appendChild(createTag("Time: " + project.time, "time"));
+    resultsSection.scrollIntoView({ behavior: "smooth" });
+  }
 
   // builds one project card as a DOM element and returns it
   // the card has title, short description, tags and link
