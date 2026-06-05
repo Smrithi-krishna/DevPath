@@ -3,6 +3,8 @@ import os
 import threading
 
 DATA_FILE = os.path.join(os.path.dirname(__file__), "..", "data", "projects.json")
+_projects_cache = None
+_cache_lock = threading.Lock()
 
 _projects_cache = None
 _cache_lock = threading.Lock()
@@ -60,10 +62,11 @@ def load_all_projects():
     do not hit the filesystem.
     """
     global _projects_cache
-    if _projects_cache is None:
-        with open(DATA_FILE, "r", encoding="utf-8") as f:
-            _projects_cache = json.load(f)
-        validate_projects(_projects_cache)
+    with _cache_lock:
+        if _projects_cache is None:
+            with open(DATA_FILE, "r", encoding="utf-8") as f:
+                _projects_cache = json.load(f)
+            validate_projects(_projects_cache)
     return _projects_cache
 
 def get_available_levels():

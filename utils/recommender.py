@@ -27,7 +27,8 @@ VALID_LEVELS = {"beginner", "intermediate", "advanced"}
 VALID_INTERESTS = {
     "web", "data", "education", "automation", "games",
     "cybersecurity", "devops", "mobile", "machine learning/ai",
-    "artificial intelligence", "cloud computing", "mobile app development"
+    "artificial intelligence", "cloud computing", "mobile app development",
+    "backend", "tools", "productivity", "business logic"
 }
 VALID_TIMES = {"low", "medium", "high"}
 

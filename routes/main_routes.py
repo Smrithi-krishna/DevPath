@@ -15,10 +15,8 @@ import os
 NO_PROJECT_INTERESTS = {
     "machine learning/ai",
     "devops",
-    "mobile",
     "artificial intelligence",
     "cloud computing",
-    "mobile app development",
 }
 
 def interest_has_no_projects(interest):
@@ -62,7 +60,7 @@ def recommend():
         interest (str) - Web | Data | Education | Automation | Games
         time     (str) - Low | Medium | High
     """
-    payload = request.get_json()
+    payload = request.get_json(silent=True)
 
     if not payload:
         return jsonify({"error": "Request body must be valid JSON."}), 400
