@@ -17,5 +17,4 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Fixed
 
-- Fixed the 'Import from GitHub' modal to correctly fetch skills and handle invalid usernames
 - Fixed an issue where skill chips on the homepage were unclickable due to JavaScript syntax errors
