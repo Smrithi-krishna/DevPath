@@ -23,6 +23,15 @@ WEIGHT_INTEREST = SCORING_WEIGHTS["interest"]
 WEIGHT_TIME = SCORING_WEIGHTS["time"]
 
 
+VALID_LEVELS = {"beginner", "intermediate", "advanced"}
+VALID_INTERESTS = {
+    "web", "data", "education", "automation", "games",
+    "cybersecurity", "devops", "mobile", "machine learning/ai",
+    "artificial intelligence", "cloud computing", "mobile app development",
+    "backend", "tools", "productivity", "business logic"
+}
+VALID_TIMES = {"low", "medium", "high"}
+
 # Common aliases and abbreviations for skills
 # This improves recommendation accuracy by normalizing user input
 SKILL_ALIASES = {
@@ -37,18 +46,34 @@ SKILL_ALIASES = {
 
 def parse_skills(skills_string):
     """
-    Convert a raw comma-separated skills string into
-    a normalized lowercase list.
+    Convert a skills string into a normalized lowercase list.
 
-    Example:
-    "JS, HTML5, CSS3" -> ["javascript", "html", "css"]
+    Accepts two formats:
+      1. JSON array (preferred): '["HTML, CSS", "JavaScript"]'
+         Handles skill names that contain commas without mis-splitting.
+      2. Comma-separated string (legacy fallback): "HTML, CSS, JavaScript"
+
+    Example:    
+    '["JS", "HTML5", "CSS3"]' -> ["javascript", "html", "css"]
     """
+    import json
 
-    raw_skills = [
-        s.strip().lower()
-        for s in skills_string.split(",")
-        if s.strip()
-    ]
+    # Skills are serialized as JSON arrays.
+    # Legacy comma-separated values remain supported for compatibility.
+    try:
+        # Preferred path: frontend sends a JSON-serialized array
+        parsed = json.loads(skills_string)
+        if isinstance(parsed, list):
+            raw_skills = [s.strip().lower() for s in parsed if isinstance(s, str) and s.strip()]
+        else:
+            raise ValueError("Parsed JSON is not a list")
+    except (json.JSONDecodeError, ValueError, TypeError):
+        # Fallback: handle plain comma-separated strings
+        raw_skills = [
+            s.strip().lower()
+            for s in skills_string.split(",")
+            if s.strip()
+        ]
 
     normalized_skills = []
     for skill in raw_skills:
@@ -163,8 +188,8 @@ def validate_recommendation_inputs(skills, level, interest, time_availability):
     elif level.strip().lower() not in VALID_LEVELS:
         errors.append("Invalid experience level. Choose Beginner, Intermediate, or Advanced.")
 
-    if not interest or not interest.strip():
-        errors.append("Please select an area of interest.")
+    if not interest or not isinstance(interest, str) or interest.strip().lower() not in VALID_INTERESTS:
+        errors.append("Please select a valid area of interest.")
 
     if not time_availability or not time_availability.strip():
         errors.append("Please select your time availability.")
