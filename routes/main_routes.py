@@ -6,9 +6,23 @@
 from flask import Blueprint, render_template, request, jsonify, send_from_directory, abort, make_response
 
 from utils.recommender import get_recommendations, validate_recommendation_inputs
-from utils.data_loader import find_project_by_id, load_all_projects, get_project_stats
+from utils.data_loader import find_project_by_id, load_all_projects, get_available_levels, get_project_stats
 from utils.file_server import read_starter_code, resolve_starter_file, get_starter_code_dir
+from config import Config
 import os
+
+# Interest categories that currently have no project recommendations available
+NO_PROJECT_INTERESTS = {
+    "machine learning/ai",
+    "devops",
+    "mobile",
+    "artificial intelligence",
+    "cloud computing",
+    "mobile app development",
+}
+
+def interest_has_no_projects(interest):
+    return interest and interest.strip().lower() in NO_PROJECT_INTERESTS
 
 # Create the Blueprint that app.py will register
 main = Blueprint("main", __name__)
@@ -18,7 +32,13 @@ main = Blueprint("main", __name__)
 def index():
     """Render the homepage with the skill input form and dynamic stats."""
     stats = get_project_stats()
-    return render_template("index.html", stats=stats)
+    available_levels = get_available_levels()
+
+    return render_template("index.html", stats=stats, available_levels=available_levels, config=Config)
+
+@main.route("/contact")
+def contact():
+    return render_template("contact.html")
 
 @main.route("/health")
 def health_check():
@@ -47,16 +67,29 @@ def recommend():
     if not payload:
         return jsonify({"error": "Request body must be valid JSON."}), 400
 
-    skills            = payload.get("skills", "").strip()
-    level             = payload.get("level", "").strip()
-    interest          = payload.get("interest", "").strip()
-    time_availability = payload.get("time", "").strip()
+    # Reject non-string values (e.g. null, lists, numbers) before calling .strip()
+    string_fields = ("skills", "level", "interest", "time")
+    for field in string_fields:
+        value = payload.get(field)
+        if value is not None and not isinstance(value, str):
+            return jsonify({"error": f"'{field}' must be a string value."}), 400
+
+    skills            = (payload.get("skills") or "").strip()
+    level             = (payload.get("level") or "").strip()
+    interest          = (payload.get("interest") or "").strip()
+    time_availability = (payload.get("time") or "").strip()
 
     # Validate before running the recommendation engine
     errors = validate_recommendation_inputs(skills, level, interest, time_availability)
     if errors:
         # Return only the first error to keep the UI message clean
         return jsonify({"error": errors[0]}), 400
+
+    if interest_has_no_projects(interest):
+        return jsonify({
+            "projects": [],
+            "message": "No projects are currently available for this interest area. Please check back later."
+        }), 200
 
     results = get_recommendations(skills, level, interest, time_availability)
 
@@ -78,7 +111,7 @@ def project_detail(project_id):
     project = find_project_by_id(project_id)
     if not project:
         abort(404)
-    return render_template("project.html", project=project)
+    return render_template("project.html", project=project, config=Config)
 
 
 @main.route("/project/<int:project_id>/code")
@@ -106,9 +139,9 @@ def download_code(project_id):
     if not full_path:
         abort(404)
 
-    import os
     filename = os.path.basename(full_path)
-    return send_from_directory(get_starter_code_dir(), filename, as_attachment=True)
+    file_dir = os.path.dirname(full_path)
+    return send_from_directory(file_dir, filename, as_attachment=True)
 
 
 @main.route("/sitemap.xml")
