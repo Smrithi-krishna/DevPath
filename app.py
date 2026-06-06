@@ -59,5 +59,8 @@ def forbidden(error):
 
 
 if __name__ == "__main__":
-    # Force debug=True so your terminal will show the exact errors inside your other files
-    app.run(debug=True)
+
+    import os
+    debug_mode = os.environ.get("FLASK_DEBUG", "False").lower() in ("true", "1")
+    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)), debug=debug_mode)
+

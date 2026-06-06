@@ -29,12 +29,9 @@ def resolve_starter_file(project):
     if relative.startswith(prefix):
         relative = relative[len(prefix):]
 
-    # Resolve to an absolute path and confirm it stays within STARTER_CODE_DIR
-    full_path = os.path.normpath(os.path.join(STARTER_CODE_DIR, relative))
-    if not full_path.startswith(STARTER_CODE_DIR + os.sep):
-        return None
-
-    if not full_path.startswith(STARTER_CODE_DIR):
+    # Resolve to an absolute path and confirm it stays within STARTER_CODE_DIR.
+    full_path = os.path.abspath(os.path.normpath(os.path.join(STARTER_CODE_DIR, relative)))
+    if os.path.commonpath([STARTER_CODE_DIR, full_path]) != STARTER_CODE_DIR:
         return None
 
     if not os.path.isfile(full_path):

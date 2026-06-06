@@ -571,9 +571,13 @@ def test_download_code_found():
 
 
 def test_view_code_nested_path():
-    """Project 9 has a nested starter_code path; /code should still return 200."""
+    """A project with a nested starter_code path should still return 200."""
     client = get_client()
-    response = client.get("/project/9/code")
+    project = next(
+        p for p in load_all_projects()
+        if "/" in p["starter_code"].replace("starter_code/", "")
+    )
+    response = client.get(f"/project/{project['id']}/code")
     assert response.status_code == 200
     data = response.get_json()
     assert "code" in data
@@ -582,9 +586,13 @@ def test_view_code_nested_path():
 
 
 def test_download_code_nested_path():
-    """Project 9 has a nested starter_code path; /download should still return 200."""
+    """A project with a nested starter_code path should still download."""
     client = get_client()
-    response = client.get("/project/9/download")
+    project = next(
+        p for p in load_all_projects()
+        if "/" in p["starter_code"].replace("starter_code/", "")
+    )
+    response = client.get(f"/project/{project['id']}/download")
     assert response.status_code == 200
 
 
