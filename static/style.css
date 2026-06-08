@@ -1583,6 +1583,8 @@ select:focus {
 .project-card-footer {
   padding-top: 8px;
   border-top: 1px solid var(--gray-100);
+  display: grid;
+  gap: 10px;
 }
 
 .btn-details {
@@ -1606,6 +1608,106 @@ select:focus {
   background: var(--indigo-600);
   color: var(--white);
   text-decoration: none;
+}
+
+.btn-save-project {
+  display: block;
+  width: 100%;
+  padding: 11px 18px;
+  background: var(--indigo-50);
+  border: 1.5px solid rgba(79, 110, 247, 0.22);
+  color: var(--indigo-700);
+  border-radius: var(--r-xs);
+  font-family: var(--font-body);
+  font-size: 0.88rem;
+  font-weight: 600;
+  text-align: center;
+  cursor: pointer;
+  transition: background var(--t), color var(--t), border-color var(--t);
+}
+
+.btn-save-project:hover,
+.btn-save-project.saved {
+  background: var(--indigo-600);
+  border-color: var(--indigo-600);
+  color: var(--white);
+}
+
+.saved-projects-panel {
+  margin-top: 32px;
+  padding: 24px;
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-sm);
+  text-align: left;
+}
+
+.saved-projects-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--gray-100);
+}
+
+.saved-projects-header h3 {
+  margin: 0 0 6px;
+  color: var(--text-heading);
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+}
+
+.saved-projects-header p,
+.saved-projects-empty {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.saved-projects-count {
+  color: var(--indigo-700);
+  background: var(--indigo-50);
+  border-radius: var(--r-full);
+  padding: 6px 12px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.saved-projects-list {
+  display: grid;
+  gap: 12px;
+  padding-top: 16px;
+}
+
+.saved-project-item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 6px 14px;
+  align-items: center;
+  padding: 12px 0;
+}
+
+.saved-project-item a {
+  color: var(--text-heading);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.saved-project-item span {
+  color: var(--text-muted);
+  font-size: 0.82rem;
+}
+
+.saved-project-remove {
+  grid-row: span 2;
+  border: 0;
+  background: transparent;
+  color: var(--indigo-600);
+  cursor: pointer;
+  font-weight: 700;
 }
 
 /* ---- CTA Banner ------------------------------------------- */
