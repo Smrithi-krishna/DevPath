@@ -548,7 +548,6 @@ html[data-entry-anim="true"] .form-card form > .btn-submit              { animat
   background: rgba(255, 255, 255, 0.11);
   box-shadow: 0 0 0 3px rgba(79, 110, 247, 0.25);
 }
-
 #topic-search,
 #topic-search-mobile {
   flex: 1;
@@ -559,6 +558,7 @@ html[data-entry-anim="true"] .form-card form > .btn-submit              { animat
   font-size: 0.84rem;
   font-family: var(--font-body);
   color: #ffffff;
+  height: 40px !important;
 }
 
 #topic-search::placeholder,
@@ -601,13 +601,6 @@ html[data-entry-anim="true"] .form-card form > .btn-submit              { animat
   width: 16px;
   height: 16px;
 }
-
-.navbar-search--mobile {
-  max-width: none;
-  margin: 0 0 20px;
-  width: 100%;
-}
-
 .nav-right {
   display: flex;
   align-items: center;
@@ -841,6 +834,32 @@ html[data-entry-anim="true"] .form-card form > .btn-submit              { animat
   .nav-mobile-toggle {
     display: flex;
     margin-left: auto;
+  }
+
+  .navbar-search.navbar-search--mobile {
+    flex: 0 0 auto;
+    width: 100%;
+    max-width: 100%;
+    margin-left: 0;
+    align-self: stretch;
+    flex-direction: row-reverse;
+  }
+
+  .navbar-search--mobile .navbar-search-btn {
+    width: auto;
+    height: auto;
+    margin: 0;
+    padding: 0;
+    background: transparent;
+    border-radius: 0;
+    border: none;
+    color: rgba(255, 255, 255, 0.85);
+    margin-left: 8px;
+  }
+
+  .navbar-search--mobile .navbar-search-btn svg {
+    width: 18px;
+    height: 18px;
   }
 
   .nav-mobile-menu .theme-toggle {

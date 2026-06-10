@@ -47,6 +47,21 @@
   var menu = document.getElementById("nav-mobile-menu");
   if (!toggle || !menu) return;
 
+  toggle.addEventListener("click", function () {
+    var isOpen = menu.classList.toggle("open");
+    toggle.classList.toggle("open", isOpen);
+    toggle.setAttribute("aria-expanded", isOpen);
+  });
+
+  document.querySelectorAll(".nav-mobile-link").forEach(function (link) {
+    link.addEventListener("click", function () {
+      menu.classList.remove("open");
+      toggle.classList.remove("open");
+      toggle.setAttribute("aria-expanded", "false");
+    });
+  });
+})();
+
   function setOpen(isOpen) {
     menu.classList.toggle("open", isOpen);
     toggle.classList.toggle("open", isOpen);
@@ -66,7 +81,7 @@
   window.addEventListener("resize", function () {
     if (window.innerWidth >= 640) setOpen(false);
   });
-})();
+
 
 var STORAGE_KEY = "devpathUserProgress";
 var progress = {
@@ -997,7 +1012,7 @@ updateProfileWidgets();
         var general = document.getElementById("form-error-general");
         if (general) general.textContent = err.message || "An unexpected error occurred. Please try again.";
       });
-  });
+  })};
 
   var modal = document.getElementById("github-modal-overlay");
   var openModalBtn = document.getElementById("btn-show-github");
@@ -1073,7 +1088,7 @@ updateProfileWidgets();
         });
     });
   }
-})();
+;
 
 (function initDetailPage() {
   if (typeof PROJECT_ID === "undefined") return;
@@ -1246,4 +1261,4 @@ updateProfileWidgets();
     window.scrollTo({ top: atBottom ? 0 : document.body.scrollHeight, behavior: "smooth" });
   });
   update();
-})();
+})});
