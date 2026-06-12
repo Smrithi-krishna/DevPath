@@ -528,8 +528,12 @@
                     </span>
                   </button>
                 </label>
-
-                <!-- Inline GitHub Trigger -->
+                
+                <!-- Reset button and Inline GitHub Trigger -->
+                <div style="display: flex; gap: 3px; align-items: center;">
+                   <button type="reset" id="reset-btn" class="btn-clear" style="padding: 4px 12px; font-size: 0.75rem;">
+                    Reset
+                  </button>
                 <div class="github-inline-trigger" id="github-trigger-wrap" style="line-height: 1.2;">
                   <button type="button" id="btn-show-github" class="resource-link"
                     style="padding: 4px 8px; border-radius: var(--r-xs); font-size: 0.75rem; gap: 6px;">
@@ -540,14 +544,20 @@
                     <span>Import from GitHub</span>
                   </button>
                 </div>
+                </div>
               </div>
               <div class="skill-input-wrap" id="skill-input-wrap">
                 <div class="skill-chips-selected" id="skill-chips-selected"></div>
-                <input type="text" id="skills-input" placeholder="Type a skill and press Enter..."
-  autocomplete="off"
-  aria-haspopup="listbox"
-  aria-expanded="false"
-  aria-controls="skills-suggestions" />
+               
+                <input
+                  type="text"
+                  id="skills-input" 
+                  placeholder="Type a skill and press Enter..."
+                  autocomplete="on"
+                  aria-haspopup="listbox"
+                  aria-expanded="false"
+                  aria-controls="skills-suggestions"
+                />
                 <div id="skills-suggestions" class="skills-suggestions"></div>
               </div>
               <!-- Hidden field holds the final comma-separated value -->
@@ -683,13 +693,9 @@
             <div class="form-actions">
               <button type="submit" class="btn-submit" id="submit-btn">
                 <span id="btn-label">Generate My Projects</span>
-                <span id="btn-loading" style="display:none;">Finding matches...</span>
-              </button>
-
-              <button type="button" class="btn-clear" id="clear-filters-btn">
-                <span>Clear Filters</span>
-              </button>
-            </div>
+              <span id="btn-loading" style="display:none;">Finding matches...</span>
+            </button>
+        </div>
 
           </form>
         </div>
