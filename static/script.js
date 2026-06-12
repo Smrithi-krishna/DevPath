@@ -1254,6 +1254,30 @@ updateProfileWidgets();
         done();
       }
     });
+  } // end github modal handlers
+
+    /* ---- Scroll-to-top button ---- */
+      
+  var SCROLL_THRESHOLD = 300;
+  var scrollTopBtn = document.getElementById('scroll-top-btn');
+
+  function handleScroll() {
+    if (!scrollTopBtn) return;
+    if (window.pageYOffset > SCROLL_THRESHOLD) {
+      scrollTopBtn.classList.add('visible');
+    } else {
+      scrollTopBtn.classList.remove('visible');
+    }
+  }
+
+  function scrollToTop() {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  if (scrollTopBtn) {
+    window.addEventListener('scroll', handleScroll);
+    scrollTopBtn.addEventListener('click', scrollToTop);
+  }
   }
 
   var roadmapCheckboxes = Array.prototype.slice.call(document.querySelectorAll(".roadmap-checkbox"));
