@@ -151,6 +151,9 @@ def get_recommendations(skills_string, level, interest, time_availability):
             all_projects,
         )
 
+    # Sort projects in descending order so the
+    # most relevant recommendations appear first.
+    scored_projects.sort(key=lambda item: (item["score"], item["project"].get("id", 0)), reverse=True)
         final_score = rule_score + similarity_score
 
         if final_score > 0:

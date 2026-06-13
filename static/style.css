@@ -662,12 +662,14 @@ html[data-entry-anim="true"] .form-card form > .btn-submit              { animat
     opacity   0.25s ease;
 }
 
-.nav-link:hover {
+.nav-link:hover,
+.nav-link.active {
   color: #ffffff;
   text-decoration: none;
 }
 
-.nav-link:hover::after {
+.nav-link:hover::after,
+.nav-link.active::after {
   transform: translateX(-50%) scaleX(1);
   opacity: 1;
 }
@@ -788,12 +790,14 @@ html[data-entry-anim="true"] .form-card form > .btn-submit              { animat
     opacity   0.25s ease;
 }
 
-.nav-mobile-link:hover {
+.nav-mobile-link:hover,
+.nav-mobile-link.active {
   color: #ffffff;
   text-decoration: none;
 }
 
-.nav-mobile-link:hover::after {
+.nav-mobile-link:hover::after,
+.nav-mobile-link.active::after {
   transform: scaleX(1);
   opacity: 1;
 }
@@ -3372,16 +3376,19 @@ input[type="text"]:not(.skill-input-wrap input):focus {
 .profile-card,
 .badge-card,
 .achievement-card,
+.history-card,
 .leaderboard-card {
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(148, 163, 184, 0.12);
+  background: var(--surface);
+  border: 1px solid var(--border);
   border-radius: 28px;
   padding: 28px;
+  box-shadow: var(--shadow-sm);
 }
 
 .profile-card-header,
 .badge-card-header,
 .achievement-card-header,
+.history-card-header,
 .leaderboard-card-header {
   display: flex;
   align-items: center;
@@ -3393,19 +3400,21 @@ input[type="text"]:not(.skill-input-wrap input):focus {
 .profile-label {
   display: block;
   margin-bottom: 8px;
-  color: rgba(148, 163, 184, 1);
+  color: var(--text-body);
   font-size: 0.92rem;
+  font-weight: 500;
 }
 
 .profile-card h3 {
   font-size: 3rem;
   margin: 0;
+  color: var(--text-heading);
 }
 
 .progress-meter {
   width: 100%;
   height: 16px;
-  background: rgba(148, 163, 184, 0.14);
+  background: var(--surface-hover);
   border-radius: 999px;
   overflow: hidden;
   margin-bottom: 20px;
@@ -3419,9 +3428,10 @@ input[type="text"]:not(.skill-input-wrap input):focus {
   width: 0;
   height: 100%;
   background: linear-gradient(120deg, #6366f1, #22c55e);
-  color: #fff;
+  color: #ffffff;
   font-size: 0.8rem;
   font-weight: 700;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.4);
   transition: width 0.4s ease;
 }
 
@@ -3443,7 +3453,7 @@ input[type="text"]:not(.skill-input-wrap input):focus {
   justify-content: space-between;
   gap: 12px;
   padding: 14px 0;
-  border-bottom: 1px solid rgba(148, 163, 184, 0.08);
+  border-bottom: 1px solid var(--border);
 }
 
 .progress-stats li:last-child,
@@ -3456,14 +3466,16 @@ input[type="text"]:not(.skill-input-wrap input):focus {
 .progress-stats strong,
 .leaderboard-list span,
 .achievement-item strong {
-  color: #e2e8f0;
+  color: var(--text-body);
+  font-weight: 500;
 }
 
 .progress-stats span,
 .leaderboard-list strong,
 .achievement-item span,
 .achievement-item small {
-  color: rgba(148, 163, 184, 1);
+  color: var(--text-heading);
+  font-weight: 700;
 }
 
 .progress-badge-grid {
@@ -3478,18 +3490,20 @@ input[type="text"]:not(.skill-input-wrap input):focus {
   gap: 12px;
   padding: 14px 16px;
   border-radius: 18px;
-  background: rgba(148, 163, 184, 0.06);
-  color: rgba(226, 232, 240, 1);
+  background: var(--surface-hover);
+  color: var(--text-heading);
+  border: 1px solid var(--border);
   transition: transform 0.2s ease, background 0.2s ease;
 }
 
 .progress-badge--unlocked {
   background: rgba(34, 197, 94, 0.12);
-  color: #d1fae5;
+  color: var(--text-heading);
+  border-color: rgba(34, 197, 94, 0.3);
 }
 
 .progress-badge--locked {
-  opacity: 0.6;
+  opacity: 0.7;
 }
 
 .badge-icon {
@@ -3499,7 +3513,7 @@ input[type="text"]:not(.skill-input-wrap input):focus {
   align-items: center;
   justify-content: center;
   border-radius: 999px;
-  background: rgba(148, 163, 184, 0.14);
+  background: var(--surface-hover);
   font-size: 0.88rem;
 }
 
@@ -3519,7 +3533,7 @@ input[type="text"]:not(.skill-input-wrap input):focus {
 }
 
 .achievement-empty {
-  color: rgba(148, 163, 184, 1);
+  color: var(--text-light);
   padding: 16px 0;
 }
 
@@ -3529,17 +3543,19 @@ input[type="text"]:not(.skill-input-wrap input):focus {
   justify-content: center;
   gap: 8px;
   background: transparent;
-  border: 1px solid rgba(148, 163, 184, 0.24);
-  color: #e2e8f0;
+  border: 1px solid var(--border);
+  color: var(--text-body);
   border-radius: 999px;
   padding: 12px 18px;
   cursor: pointer;
-  transition: background 0.2s ease, border-color 0.2s ease;
+  font-weight: 500;
+  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
 }
 
 .btn-ghost:hover {
-  background: rgba(255, 255, 255, 0.06);
-  border-color: rgba(148, 163, 184, 0.4);
+  background: var(--surface-hover);
+  border-color: var(--text-light);
+  color: var(--text-heading);
 }
 
 .btn-mark-complete {

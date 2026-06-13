@@ -28,6 +28,7 @@
   <link rel="icon" href="/static/favicon.svg" type="image/svg+xml" />
   {% include 'partials/theme_head.html' %}
   <link rel="stylesheet" href="/static/style.css" />
+  <link rel="stylesheet" href="/static/bookmarks.css" />
   <link
     href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap"
     rel="stylesheet" />
@@ -1001,38 +1002,7 @@
   <script src="https://unpkg.com/lenis@1.1.13/dist/lenis.min.js"></script>
 
   <script src="/static/script.js"></script>
-  <script>
-    (function () {
-      const themeToggle = document.getElementById("theme-toggle");
 
-      if (!themeToggle) return;
-
-      const savedTheme = localStorage.getItem("theme");
-
-      if (savedTheme === "dark") {
-        document.documentElement.setAttribute("data-theme", "dark");
-        themeToggle.textContent = "☀️";
-        themeToggle.setAttribute("aria-pressed", "true");
-      }
-
-      themeToggle.addEventListener("click", function () {
-        const isDark =
-          document.documentElement.getAttribute("data-theme") === "dark";
-
-        if (isDark) {
-          document.documentElement.removeAttribute("data-theme");
-          localStorage.setItem("theme", "light");
-          themeToggle.textContent = "🌙";
-          themeToggle.setAttribute("aria-pressed", "false");
-        } else {
-          document.documentElement.setAttribute("data-theme", "dark");
-          localStorage.setItem("theme", "dark");
-          themeToggle.textContent = "☀️";
-          themeToggle.setAttribute("aria-pressed", "true");
-        }
-      });
-    })();
-  </script>
 </body>
 
 </html>
