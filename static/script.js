@@ -763,12 +763,12 @@ function recordSearch() {
     btnLoading.style.display = isLoading ? "inline-flex" : "none";
 
     if (isLoading) {
-      // Show the results section with only the loading indicator visible
-      resultsSection.style.display = "block";
-      resultsLoadingEl.style.display = "block";
+      resultsGrid.innerHTML = "";         
       resultsGrid.style.display = "none";
       resultsEmptyEl.style.display = "none";
-      // Scroll down so the user can see the spinner without manually scrolling
+      resultsEmptyEl.textContent = "";
+      resultsLoadingEl.style.display = "block";
+      resultsSection.style.display = "block";
       resultsSection.scrollIntoView({ behavior: "smooth" });
     } else {
       resultsLoadingEl.style.display  = "none";
@@ -914,15 +914,19 @@ function recordSearch() {
   function renderResults(projects, message) {
     resultsSection.style.display = "block";
     resultsLoadingEl.style.display = "none";
-    resultsGrid.textContent = "";
+    // Always wipe the grid and hide both states before deciding what to show
+    resultsGrid.innerHTML = "";
+    resultsGrid.style.display = "none";
+    resultsEmptyEl.style.display = "none";
+    if (emptyMessageEl) { emptyMessageEl.textContent = ""; }
     if (!projects || projects.length === 0) {
-      resultsGrid.style.display = "none";
       resultsEmptyEl.style.display = "block";
-      emptyMessageEl.textContent = message || "Try adjusting your skills or choosing a different interest area.";
+      if (emptyMessageEl) {
+        emptyMessageEl.textContent = message || "Try adjusting your skills or choosing a different interest area.";
+      }
       resultsSection.scrollIntoView({ behavior: "smooth" });
       return;
     }
-    resultsEmptyEl.style.display = "none";
     resultsGrid.style.display = "grid";
     projects.forEach(function (project) { resultsGrid.appendChild(buildProjectCard(project)); });
     resultsSection.scrollIntoView({ behavior: "smooth" });
