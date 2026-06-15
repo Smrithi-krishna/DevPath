@@ -143,12 +143,20 @@ var errorMsg = document.getElementById('github-modal-error');
   }
 
   function initTheme() {
-    var theme = html.getAttribute("data-theme") || "light";
-    applyTheme(theme);
-    requestAnimationFrame(function () {
-      html.classList.add("theme-ready");
-    });
+  var theme = "light";
+
+  try {
+    theme = localStorage.getItem("theme") || html.getAttribute("data-theme") || "light";
+  } catch (err) {
+    theme = html.getAttribute("data-theme") || "light";
   }
+
+  applyTheme(theme);
+
+  requestAnimationFrame(function () {
+    html.classList.add("theme-ready");
+  });
+}
 
   document.addEventListener("click", function (event) {
     var toggle = event.target.closest(".theme-toggle");

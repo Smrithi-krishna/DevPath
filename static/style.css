@@ -1632,13 +1632,9 @@ html[data-theme="dark"] .theme-toggle-label::before {
   text-align: left;
 }
 
+/* Form groups */
 .form-group {
   margin-bottom: 24px;
-}
-
-.form-card form > .form-group:first-child {
-  position: relative;
-  z-index: 1;
 }
 
 .form-row {
@@ -1660,7 +1656,6 @@ label {
 /* Skill input container */
 .skill-input-wrap {
   position: relative;
-  z-index: 1100;
   border: 1.5px solid var(--border);
   border-radius: var(--r-sm);
   background: var(--gray-50);
